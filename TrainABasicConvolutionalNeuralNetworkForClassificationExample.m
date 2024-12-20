@@ -69,13 +69,15 @@ layers = [
     batchNormalizationLayer
     reluLayer
     
-    maxPooling2dLayer(2,'Stride',2)
+    %maxPooling2dLayer(2,'Stride',2)
+    convolution2dLayer(2,8,'Stride',2,"Weights",ones(2,2,8,8),"Bias",zeros(1,1,8),"WeightLearnRateFactor",0,"BiasLearnRateFactor",0)
     
     convolution2dLayer(3,16,'Padding','same')
     batchNormalizationLayer
     reluLayer
     
-    maxPooling2dLayer(2,'Stride',2)
+    %maxPooling2dLayer(2,'Stride',2)
+    convolution2dLayer(2,16,'Stride',2,"Weights",ones(2,2,16,16),"Bias",zeros(1,1,16),"WeightLearnRateFactor",0,"BiasLearnRateFactor",0)
     
     convolution2dLayer(3,32,'Padding','same')
     batchNormalizationLayer
