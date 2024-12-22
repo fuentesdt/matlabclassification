@@ -14,7 +14,7 @@ classdef reshapeLayer < nnet.layer.Layer
         end
 
         function [Z] = predict(layer, X)
-            Z = reshape(X,7,7,32,[]);
+            Z = reshape(X,7,7,32);
         end
     end
     
