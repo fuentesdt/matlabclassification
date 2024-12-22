@@ -1,24 +1,25 @@
+% TrainABasicConvolutionalNeuralNetworkForClassificationExample
 
 %myreshapelayer = dlhdl.layer.reshapeLayer(7,7,32,Name="reshape1")
 
 forwardlayers = [
     imageInputLayer([28 28 1])
     
-    convolution2dLayer(3,8,'Padding','same')
+    convolution2dLayer(3,8,'Padding','same','Weights',net.Layers(2).Weights,'Bias',net.Layers(2).Bias)
     batchNormalizationLayer
     reluLayer
     
     %maxPooling2dLayer(2,'Stride',2)
-    convolution2dLayer(2,8,'Stride',2,"Weights",ones(2,2,8,8),"Bias",zeros(1,1,8),"WeightLearnRateFactor",0,"BiasLearnRateFactor",0)
+    convolution2dLayer(2,8,'Stride',2,'Weights',ones(2,2,8,8),'Bias',zeros(1,1,8),'WeightLearnRateFactor',0,'BiasLearnRateFactor',0)
     
-    convolution2dLayer(3,16,'Padding','same')
+    convolution2dLayer(3,16,'Padding','same','Weights',net.Layers(6).Weights,'Bias',net.Layers(6).Bias)
     batchNormalizationLayer
     reluLayer
     
     %maxPooling2dLayer(2,'Stride',2)
-    convolution2dLayer(2,16,'Stride',2,"Weights",ones(2,2,16,16),"Bias",zeros(1,1,16),"WeightLearnRateFactor",0,"BiasLearnRateFactor",0)
+    convolution2dLayer(2,16,'Stride',2,'Weights',ones(2,2,16,16),'Bias',zeros(1,1,16),'WeightLearnRateFactor',0,'BiasLearnRateFactor',0)
     
-    convolution2dLayer(3,32,'Padding','same')
+    convolution2dLayer(3,32,'Padding','same','Weights',net.Layers(10).Weights,'Bias',net.Layers(10).Bias)
     batchNormalizationLayer
     reluLayer
     
@@ -29,21 +30,21 @@ transposelayers = [
     featureInputLayer(10,Name='input')
     fullyConnectedLayer(1568)
     %myreshape:oadayer 
-    reshapeLayer("reshape")
+    reshapeLayer('reshape')
 
     reluLayer
     %batchNormalizationLayer
     transposedConv2dLayer(3,32)
 
     %maxPooling2dLayer(2,'Stride',2)
-    transposedConv2dLayer(2,32,"Stride",[2 2],"Weights",ones(2,2,32,32),"Bias",zeros(1,1,32))
+    transposedConv2dLayer(2,32,'Stride',[2 2],'Weights',ones(2,2,32,32),'Bias',zeros(1,1,32))
 
     reluLayer
     %batchNormalizationLayer
     transposedConv2dLayer(3,16)
 
     %maxPooling2dLayer(2,'Stride',2)
-    transposedConv2dLayer(2,16,"Stride",[2 2],"Weights",ones(2,2,16,16),"Bias",zeros(1,1,16))
+    transposedConv2dLayer(2,16,'Stride',[2 2],'Weights',ones(2,2,16,16),'Bias',zeros(1,1,16))
 
     reluLayer
     %batchNormalizationLayer
