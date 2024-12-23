@@ -81,13 +81,13 @@ function y = Afun(x,tflag,net,forwardnet,transposenet)
        XX = reshape(x,[28 28 1]);
        dlX = dlarray(XX,"SSC");
        dlY = forward(transposenet ,dlX);
-       y=double(dlY(:));
+       y=extractdata(dlY(:));
    else
        %y = A' *x ; 
        XX = reshape(net.Layers(13).Weights'*x,[7 7 32]);
        dlX = dlarray(XX,"SSC");
        dlY = forward(transposenet ,dlX);
-       y=double(dlY(:));
+       y=extractdata(dlY(:));
    end
 
 end
