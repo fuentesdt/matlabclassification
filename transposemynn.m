@@ -27,55 +27,67 @@ forwardnet = dlnetwork(forwardlayers )
 analyzeNetwork(forwardnet )
 
 transposelayers = [
-    featureInputLayer(10,Name='input')
-    fullyConnectedLayer(1568,Name='full')
-    %myreshape:oadayer 
+    %featureInputLayer(10,Name='input')
+    %fullyConnectedLayer(1568,Name='full')
+    %myreshapeLayer 
     %reshapeLayer('reshape')
-    %functionLayer(@(X) reshape(X,7,7,32,[]),Description='reshape')
+    %functionLayer(@(X) reshape(X, [7 7 32 1]),Name='reshape',Description='reshape')
+    %functionLayer(@(X) dlarray(X,"SSBC"),Formattable=true,Acceleratable=true)
+    imageInputLayer([7 7 32])
 
     reluLayer
     %batchNormalizationLayer
-    transposedConv2dLayer(3,32,'Weights',permute(net.Layers(10).Weights,[1 2 4 3]),'Bias',net.Layers(10).Bias)
-
-    %maxPooling2dLayer(2,'Stride',2)
-    transposedConv2dLayer(2,32,'Stride',[2 2],'Weights',ones(2,2,32,32),'Bias',zeros(1,1,32))
-
-    reluLayer
-    %batchNormalizationLayer
-    transposedConv2dLayer(3,16,'Weights',permute(net.Layers(6).Weights,[1 2 4 3]),'Bias',net.Layers(6).Bias)
+    transposedConv2dLayer(3,16,'Cropping','same','Weights',net.Layers(10).Weights,'Bias',zeros(1,1,16))
 
     %maxPooling2dLayer(2,'Stride',2)
     transposedConv2dLayer(2,16,'Stride',[2 2],'Weights',ones(2,2,16,16),'Bias',zeros(1,1,16))
 
     reluLayer
     %batchNormalizationLayer
-    transposedConv2dLayer(3,8,'Weights',permute(net.Layers(2).Weights,[1 2 4 3]),'Bias',net.Layers(2).Bias)
+    transposedConv2dLayer(3,8,'Cropping','same','Weights',net.Layers(6).Weights,'Bias',zeros(1,1,8))
+
+    %maxPooling2dLayer(2,'Stride',2)
+    transposedConv2dLayer(2,8,'Stride',[2 2],'Weights',ones(2,2,8,8),'Bias',zeros(1,1,8))
+
+    reluLayer
+    %batchNormalizationLayer
+    transposedConv2dLayer(3,1,'Cropping','same','Weights',net.Layers(2).Weights,'Bias',zeros(1,1,1))
     
-    %softmaxLayer
-    %classificationLayer
     ];
 
 
+analyzeNetwork(transposelayers)
 transposenet = dlnetwork(transposelayers)
-analyzeNetwork(transposenet )
+
+
+
+
 
 %% 
 % Compute the singular value decomposition of |A|, returning the six largest 
 % singular values and the corresponding singular vectors. Specify a fourth output 
 % argument to check convergence of the singular values.
-load west0479
-A = west0479;
+% load west0479
+% A = west0479;
+% 
+% [U,S,V,cflag] = svds(A);
+% cflag
 
-[U,S,V,cflag] = svds(A);
-cflag
+s = svds(@(x,tflag) Afun(x,tflag,net,forwardnet,transposenet),[10 784],10)
 
-s = svds(@(x,tflag) Afun(x,tflag,A),size(A),10)
-
-function y = Afun(x,tflag,A)
+function y = Afun(x,tflag,net,forwardnet,transposenet)
    if strcmp(tflag,'notransp')
-       y =  A * x;
+       %y =  A * x;
+       XX = reshape(x,[28 28 1]);
+       dlX = dlarray(XX,"SSC");
+       dlY = forward(transposenet ,dlX);
+       y=double(dlY(:));
    else
-       y = A' *x ; 
+       %y = A' *x ; 
+       XX = reshape(net.Layers(13).Weights'*x,[7 7 32]);
+       dlX = dlarray(XX,"SSC");
+       dlY = forward(transposenet ,dlX);
+       y=double(dlY(:));
    end
 
 end

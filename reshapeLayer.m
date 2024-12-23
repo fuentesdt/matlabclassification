@@ -1,4 +1,4 @@
-classdef reshapeLayer < nnet.layer.Layer
+classdef reshapeLayer < nnet.layer.Formattable
 
     properties
 
@@ -14,7 +14,7 @@ classdef reshapeLayer < nnet.layer.Layer
         end
 
         function [Z] = predict(layer, X)
-            Z = reshape(X,7,7,32);
+            Z = reshape(X,7,7,32,1);
         end
     end
     
