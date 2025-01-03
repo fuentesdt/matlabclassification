@@ -25,6 +25,7 @@ forwardlayers = [
 
 forwardnet = dlnetwork(forwardlayers )
 analyzeNetwork(forwardnet )
+analyzeNetwork(net )
 
 transposelayers = [
     %featureInputLayer(10,Name='input')
@@ -73,21 +74,25 @@ transposenet = dlnetwork(transposelayers)
 % [U,S,V,cflag] = svds(A);
 % cflag
 
-s = svds(@(x,tflag) Afun(x,tflag,net,forwardnet,transposenet),[10 784],10)
+%% xrandmy = rand(1,784);
+%% yout = myAfun(xrandmy,'notransp',net,forwardnet,transposenet)
+%% yrandmy = rand(10,1);
+%% xout = myAfun(yrandmy,'transp',net,forwardnet,transposenet)
+s = svds(@(x,tflag) myAfun(x,tflag,net,forwardnet,transposenet),[10 784],10)
 
-function y = Afun(x,tflag,net,forwardnet,transposenet)
+function y = myAfun(x,tflag,net,forwardnet,transposenet)
    if strcmp(tflag,'notransp')
        %y =  A * x;
        XX = reshape(x,[28 28 1]);
        dlX = dlarray(XX,"SSC");
-       dlY = forward(transposenet ,dlX);
+       dlY = forward(forwardnet ,dlX);
        y=extractdata(dlY(:));
    else
        %y = A' *x ; 
        XX = reshape(net.Layers(13).Weights'*x,[7 7 32]);
        dlX = dlarray(XX,"SSC");
        dlY = forward(transposenet ,dlX);
-       y=extractdata(dlY(:));
+       y=double(extractdata(dlY(:)));
    end
 
 end
